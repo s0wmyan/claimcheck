@@ -1,0 +1,20 @@
+{
+  "claims": 300,
+  "retrievers": {
+    "BM25 (keyword)": {
+      "ndcg@10": 0.6622,
+      "recall@3": 0.6807,
+      "recall@10": 0.7843
+    },
+    "Dense (embeddings)": {
+      "ndcg@10": 0.7033,
+      "recall@3": 0.7087,
+      "recall@10": 0.8436
+    },
+    "Hybrid (rank fusion)": {
+      "ndcg@10": 0.7058,
+      "recall@3": 0.7097,
+      "recall@10": 0.8229
+    }
+  }
+}
