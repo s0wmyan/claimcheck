@@ -1,0 +1,27 @@
+{
+  "claims": 300,
+  "majority_baseline": {
+    "label": "SUPPORTED",
+    "accuracy": 0.4133
+  },
+  "conditions": {
+    "closed_book": {
+      "accuracy": 0.39,
+      "macro_f1": 0.3841,
+      "unreadable_replies": 0,
+      "mean_seconds": 3.18
+    },
+    "retrieved": {
+      "accuracy": 0.5967,
+      "macro_f1": 0.5508,
+      "unreadable_replies": 0,
+      "mean_seconds": 10.93
+    },
+    "oracle": {
+      "accuracy": 0.6733,
+      "macro_f1": 0.6495,
+      "unreadable_replies": 0,
+      "mean_seconds": 6.04
+    }
+  }
+}

@@ -33,6 +33,31 @@ A retrieved abstract counts as correct if the claim cites it.
   than BM25, and fusing them trades a little recall@10 for a little precision
   at the top.
 
+### Does retrieval improve the verdicts?
+
+The judge is `phi4-mini`, a 3.8-billion-parameter model running locally.
+
+| What the model sees | Accuracy | Macro-F1 |
+|---|---|---|
+| Always answer "supported" (majority baseline) | 41.3% | n/a |
+| Closed-book: the claim only | 39.0% | 0.384 |
+| **Top 3 abstracts from hybrid retrieval** | **59.7%** | **0.551** |
+| Oracle: the abstracts the claim cites | 67.3% | 0.650 |
+
+- **Retrieval adds 21 points of accuracy.** Without it the model does no
+  better than always guessing the most common label.
+- **Retrieval is not the main bottleneck.** Perfect retrieval would add only 8
+  more points; the remaining third of claims fail in the model's reading of
+  the evidence. A stronger judge would help more than a better retriever.
+- **Where it fails.** With retrieval the model gets 105 of 124 supported
+  claims right but only 22 of 64 refuted ones, and it labels 50 of 112
+  unsettled claims as supported. It is biased towards agreeing with the claim.
+- When a cited abstract is in the top 3 (219 claims) accuracy is 63.5%; when it
+  is not (81 claims) it is 49.4%.
+
+Every prediction, with the model's reason, is in
+[`results/predictions.jsonl`](results/predictions.jsonl).
+
 ## How it works
 
 ```mermaid
@@ -82,7 +107,7 @@ python -m pytest
 
 ## Design decisions
 
-- **BM25 from scratch.** It is about 40 lines and matching a published
+- **BM25 from scratch.** It is about 50 lines, and matching a published
   baseline shows it is correct, which a library call would not.
 - **No vector database.** 5,183 vectors of 768 numbers are 16 MB. Exact search
   is a single matrix-vector product and takes milliseconds; an approximate
@@ -94,6 +119,17 @@ python -m pytest
 - **An oracle condition.** Giving the model the cited abstracts shows how much
   error is left when retrieval is perfect, separating search mistakes from
   reasoning mistakes.
+
+## Limitations
+
+- The judge is a small model; 59.7% is well short of systems fine-tuned for
+  this task. The project measures what retrieval contributes, not a state of
+  the art.
+- The 300 claims are SciFact's dev set, since its test labels are not public.
+  No settings were tuned on them, but they are not a held-out test set.
+- The tokeniser has no stemming, so "fracture" and "fractures" are different
+  words to BM25.
+- Abstracts are cut to 300 words before the judge reads them.
 
 ## Data and credits
 
